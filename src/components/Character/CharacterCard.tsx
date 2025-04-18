@@ -111,10 +111,10 @@ const CharacterCard: React.FC<CharacterCardProps> = ({ character }) => {
             </div>
           </div>
 
-          <div className="mt-4 transition-all duration-300 opacity-0 group-hover:opacity-100">
+          <div className="mt-4 transition-all duration-300 md:opacity-0 md:group-hover:opacity-100">
             <button
               onClick={() => setIsModalOpen(true)}
-              className="w-full px-4 py-2 font-medium text-white transition-all transform rounded-lg bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 hover:scale-105"
+              className="w-full px-4 py-2 font-medium text-white transition-all transform rounded-lg bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 active:scale-95 md:hover:scale-105"
             >
               View Details
             </button>

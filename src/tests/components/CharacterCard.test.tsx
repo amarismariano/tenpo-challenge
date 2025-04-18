@@ -85,11 +85,15 @@ describe("CharacterCard Component", () => {
     const card = screen.getByTestId("character-card");
     const button = screen.getByRole("button", { name: /view details/i });
 
-    expect(button.parentElement).toHaveClass("opacity-0");
+    expect(button.parentElement).toHaveClass(
+      "mt-4 transition-all duration-300 md:opacity-0 md:group-hover:opacity-100"
+    );
 
     fireEvent.mouseEnter(card);
 
-    expect(button.parentElement).toHaveClass("group-hover:opacity-100");
+    expect(button.parentElement).toHaveClass(
+      "mt-4 transition-all duration-300 md:opacity-0 md:group-hover:opacity-100"
+    );
   });
 
   it("opens modal when View Details button is clicked", () => {
