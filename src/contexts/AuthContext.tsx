@@ -42,8 +42,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       };
     }
 
-    // Para efectos de prueba, cualquier email válido y contraseña funcionará
-    const token = btoa(`${email}:${password}`); // Crear un token simple
+    // For testing purposes, any valid email and password will work
+    const token = btoa(`${email}:${password}`);
     storage.setToken(token);
     setIsAuthenticated(true);
     showToast("Welcome back! You've successfully logged in 🚀", "success");
@@ -51,7 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const logout = () => {
-    // Limpiar todos los datos del usuario
+    // Clear all user data
     storage.clearAll();
     setIsAuthenticated(false);
     showToast(
