@@ -61,26 +61,26 @@ const Login: React.FC = () => {
   return (
     <>
       <CursorFollower />
-      <div className="min-h-screen flex items-center justify-center bg-[#1a103d]">
-        <div className="w-full max-w-md">
-          <div className="bg-[#0a0620] rounded-2xl shadow-xl border border-indigo-500/30 p-8">
-            <div className="text-center mb-8">
-              <div className="inline-block mb-4">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+        <div className="w-full max-w-md px-4">
+          <div className="p-8 bg-gray-900/50 backdrop-blur-lg border border-indigo-500/20 shadow-2xl rounded-2xl shadow-indigo-500/10">
+            <div className="mb-8 text-center">
+              <div className="inline-block mb-4 transform transition-transform hover:scale-105">
                 <img
                   src="https://rickandmortyapi.com/api/character/avatar/1.jpeg"
                   alt="Rick"
-                  className="w-24 h-24 rounded-full border-4 border-green-400 shadow-lg"
+                  className="w-24 h-24 border-4 border-green-400 rounded-full shadow-lg shadow-green-400/20"
                 />
               </div>
-              <h2 className="text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+              <h2 className="text-4xl font-bold text-transparent bg-gradient-to-r from-green-400 via-blue-400 to-purple-500 bg-clip-text">
                 Rick & Morty Portal
               </h2>
-              <p className="text-gray-100 mt-2 font-medium">
+              <p className="mt-2 text-sm font-medium text-gray-300">
                 Enter any credentials to continue your adventure
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+            <form onSubmit={handleSubmit} className="space-y-6" noValidate>
               <div>
                 <input
                   type="email"
@@ -89,8 +89,10 @@ const Login: React.FC = () => {
                     setEmail(e.target.value);
                     setErrors((prev) => ({ ...prev, email: "", form: "" }));
                   }}
-                  className={`w-full px-4 py-3 bg-white rounded-lg text-gray-900 font-medium ${
-                    errors.email ? "border-2 border-red-500" : ""
+                  className={`w-full px-4 py-3 text-white bg-gray-800/50 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all duration-200 ${
+                    errors.email
+                      ? "border-red-500/50 focus:ring-red-500/50"
+                      : "border-gray-700/50"
                   }`}
                   placeholder="Email address"
                 />
@@ -107,8 +109,10 @@ const Login: React.FC = () => {
                     setPassword(e.target.value);
                     setErrors((prev) => ({ ...prev, password: "", form: "" }));
                   }}
-                  className={`w-full px-4 py-3 bg-white rounded-lg text-gray-900 font-medium ${
-                    errors.password ? "border-2 border-red-500" : ""
+                  className={`w-full px-4 py-3 text-white bg-gray-800/50 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all duration-200 ${
+                    errors.password
+                      ? "border-red-500/50 focus:ring-red-500/50"
+                      : "border-gray-700/50"
                   }`}
                   placeholder="Password"
                 />
@@ -124,12 +128,12 @@ const Login: React.FC = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-3 px-4 bg-gradient-to-r from-green-500 to-blue-600 text-white font-medium rounded-lg transition-all hover:from-green-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-3 font-medium text-white transition-all duration-300 rounded-lg bg-gradient-to-r from-green-500 via-blue-500 to-purple-600 hover:from-green-600 hover:via-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40"
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center">
                     <div
-                      className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"
+                      className="w-6 h-6 border-2 border-white rounded-full border-t-transparent animate-spin"
                       role="status"
                       aria-label="Loading"
                     ></div>
