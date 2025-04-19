@@ -1,6 +1,6 @@
-# Rick and Morty Character Viewer
+# Rick and Morty Character and Location Viewer
 
-A web application built with React + TypeScript that allows you to explore and search for Rick and Morty characters. This project was developed as part of a technical challenge, focusing on creating a modern, responsive, and user-friendly interface while implementing best practices in React development.
+A web application built with React + TypeScript that allows you to explore and search for Rick and Morty characters and locations. This project was developed as part of a technical challenge, focusing on creating a modern, responsive, and user-friendly interface while implementing best practices in React development.
 
 ## 🎯 Challenge Requirements and Solutions
 
@@ -88,7 +88,11 @@ A web application built with React + TypeScript that allows you to explore and s
 
 - 🔐 Authentication system with form validation
 - 📋 Character listing with pagination and infinite scroll support
-- 🔍 Advanced search filters (name, species, status, gender)
+- 🗺️ Location listing with search and filtering capabilities
+- 🔄 Toggle between characters and locations views
+- 🔍 Advanced search filters
+  - Characters: name, species, status, gender
+  - Locations: name, type, dimension
 - 🎯 Detailed character modal with episode information
 - 📱 Fully responsive design for all devices
 - ✨ Smooth animations and transitions
@@ -117,6 +121,7 @@ A web application built with React + TypeScript that allows you to explore and s
 src/
 ├── components/          # Reusable UI components
 │   ├── Character/      # Character-related components
+│   ├── Location/       # Location-related components
 │   ├── common/         # Shared components
 │   └── layout/         # Layout components
 ├── contexts/           # React contexts
@@ -198,10 +203,8 @@ Example:
 - [ ] Add more e2e tests with Cypress
 - [ ] Implement PWA capabilities
 - [ ] Add dark/light mode theme switch
-- [ ] Improve accessibility standards
-- [ ] Add character comparison feature
-- [ ] Implement real authentication backend
-- [ ] Add more advanced filtering options
+- [ ] Add detailed location modal with resident information
+- [ ] Implement location bookmarking feature
 
 ## 🤝 Contributing
 
