@@ -1,6 +1,6 @@
 import React from "react";
 
-const CharacterSkeleton: React.FC = () => {
+const LocationSkeleton: React.FC = () => {
   return (
     <div className="animate-pulse">
       <div className="bg-gray-200 rounded-lg p-4 mb-4">
@@ -12,14 +12,14 @@ const CharacterSkeleton: React.FC = () => {
   );
 };
 
-const CharacterSkeletonList: React.FC<{ count?: number }> = ({ count = 6 }) => {
+const LocationSkeletonList: React.FC<{ count?: number }> = ({ count = 6 }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {Array.from({ length: count }).map((_, index) => (
-        <CharacterSkeleton key={index} />
+        <LocationSkeleton key={index} />
       ))}
     </div>
   );
 };
 
-export default CharacterSkeletonList;
+export default LocationSkeletonList;
