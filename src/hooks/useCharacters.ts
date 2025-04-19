@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { getCharacters } from "../services/api";
 import { Character } from "../types/character";
 import { useDebounce } from "./useDebounce";
-import storage from "../utils/storage";
+import { storage } from "../utils/storage";
+import { cache } from "../utils/cache";
 
 interface CharacterFilters {
   name: string;
@@ -36,14 +37,9 @@ interface UseCharactersReturn {
   isSearching: boolean;
 }
 
-// Cache object to store API responses
-const cache: Record<string, { data: any; timestamp: number }> = {};
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-const MINIMUM_LOADING_TIME = 500;
-
 export const useCharacters = (): UseCharactersReturn => {
   const [characters, setCharacters] = useState<Character[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [page, setPage] = useState(() => {
     const savedPage = storage.getPage();
@@ -121,42 +117,38 @@ export const useCharacters = (): UseCharactersReturn => {
         if (isMounted) {
           setIsLoading(false);
         }
-      }, MINIMUM_LOADING_TIME);
+      }, cache.getMinimumLoadingTime());
     };
 
     const fetchCharacters = async () => {
       try {
-        startLoading();
-
         const cacheKey = getCacheKey(page);
-        const cached = cache[cacheKey];
+        const cached = cache.get<Character>(cacheKey);
 
-        if (
-          cached &&
-          Date.now() - cached.timestamp < CACHE_DURATION &&
-          !isSearching
-        ) {
+        if (cached && !isSearching) {
           if (isMounted) {
             setCharacters(cached.data.results);
             setTotalPages(cached.data.info.pages);
             setTotalResults(cached.data.info.count);
-            stopLoading();
+            setIsLoading(false);
           }
-        } else {
-          const data = await getCharacters(page, effectiveFilters);
+          return;
+        }
 
-          if (isMounted) {
-            setCharacters(data.results);
-            setTotalPages(data.info.pages);
-            setTotalResults(data.info.count);
+        startLoading();
 
-            cache[cacheKey] = {
-              data,
-              timestamp: Date.now(),
-            };
+        const data = await getCharacters(page, effectiveFilters);
 
-            stopLoading();
+        if (isMounted) {
+          setCharacters(data.results);
+          setTotalPages(data.info.pages);
+          setTotalResults(data.info.count);
+
+          if (!isSearching) {
+            cache.set(cacheKey, data);
           }
+
+          stopLoading();
         }
       } catch (error: unknown) {
         const err = error as CharacterError;

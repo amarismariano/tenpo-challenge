@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { getLocations } from "../services/api";
 import { Location, LocationFilters } from "../types/location";
 import { useDebounce } from "./useDebounce";
-import storage from "../utils/storage";
+import { storage } from "../utils/storage";
+import { cache } from "../utils/cache";
 
 const DEFAULT_FILTERS: LocationFilters = {
   name: "",
@@ -28,14 +29,9 @@ interface UseLocationsReturn {
   isSearching: boolean;
 }
 
-// Cache object to store API responses
-const cache: Record<string, { data: any; timestamp: number }> = {};
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-const MINIMUM_LOADING_TIME = 500;
-
 export const useLocations = (): UseLocationsReturn => {
   const [locations, setLocations] = useState<Location[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [page, setPage] = useState(() => {
     const savedPage = storage.getLocationsPage();
@@ -131,44 +127,38 @@ export const useLocations = (): UseLocationsReturn => {
         if (isMounted) {
           setIsLoading(false);
         }
-      }, MINIMUM_LOADING_TIME);
+      }, cache.getMinimumLoadingTime());
     };
 
     const fetchLocations = async () => {
       try {
-        startLoading();
-
         const cacheKey = getCacheKey(page);
-        const cached = cache[cacheKey];
+        const cached = cache.get<Location>(cacheKey);
 
-        if (
-          cached &&
-          Date.now() - cached.timestamp < CACHE_DURATION &&
-          !isSearching
-        ) {
+        if (cached && !isSearching) {
           if (isMounted) {
             setLocations(cached.data.results);
             setTotalPages(cached.data.info.pages);
             setTotalResults(cached.data.info.count);
-            stopLoading();
+            setIsLoading(false);
           }
-        } else {
-          const data = await getLocations(page, effectiveFilters);
+          return;
+        }
 
-          if (isMounted) {
-            setLocations(data.results);
-            setTotalPages(data.info.pages);
-            setTotalResults(data.info.count);
+        startLoading();
 
-            if (!isSearching) {
-              cache[cacheKey] = {
-                data,
-                timestamp: Date.now(),
-              };
-            }
+        const data = await getLocations(page, effectiveFilters);
 
-            stopLoading();
+        if (isMounted) {
+          setLocations(data.results);
+          setTotalPages(data.info.pages);
+          setTotalResults(data.info.count);
+
+          if (!isSearching) {
+            cache.set(cacheKey, data);
           }
+
+          stopLoading();
         }
       } catch (error: unknown) {
         const err = error as LocationError;
@@ -178,7 +168,7 @@ export const useLocations = (): UseLocationsReturn => {
         setLocations([]);
         setTotalPages(0);
         setTotalResults(0);
-        stopLoading();
+        setIsLoading(false);
       }
     };
 
@@ -199,14 +189,7 @@ export const useLocations = (): UseLocationsReturn => {
 
   const handleSetFilters = useCallback(
     (newFilters: Partial<LocationFilters>) => {
-      setFilters((prev) => {
-        const updated = { ...prev, ...newFilters };
-        // Si todos los filtros están vacíos, resetear al estado inicial
-        if (Object.values(updated).every((value) => !value.trim())) {
-          return DEFAULT_FILTERS;
-        }
-        return updated;
-      });
+      setFilters((prev) => ({ ...prev, ...newFilters }));
       setPage(1);
       setError(null);
     },
