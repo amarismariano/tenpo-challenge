@@ -1,5 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { Character, ApiResponse, CharacterFilters } from "../types/character";
+import { Location, LocationResponse, LocationFilters } from "../types/location";
 
 interface ApiErrorResponse {
   error?: string;
@@ -21,7 +22,7 @@ const handleApiError = (error: AxiosError<ApiErrorResponse>): never => {
   if (error.response) {
     switch (error.response.status) {
       case 404:
-        throw new Error("No characters found with the current filters");
+        throw new Error("No resources found with the current filters");
       case 429:
         throw new Error("Too many requests. Please try again later");
       case 500:
@@ -38,6 +39,7 @@ const handleApiError = (error: AxiosError<ApiErrorResponse>): never => {
   }
 };
 
+// Character endpoints
 export const getCharacters = async (
   page: number = 1,
   filters: Partial<CharacterFilters>
@@ -69,7 +71,49 @@ export const getCharacterById = async (id: number): Promise<Character> => {
 };
 
 export const getMultipleCharacters = async (ids: number[]) => {
-  const response = await api.get<Character[]>(`/character/${ids.join(",")}`);
+  try {
+    const response = await api.get<Character[]>(`/character/${ids.join(",")}`);
+    return response.data;
+  } catch (error) {
+    throw handleApiError(error as AxiosError<ApiErrorResponse>);
+  }
+};
+
+// Location endpoints
+export const getLocations = async (
+  page: number = 1,
+  filters: Partial<LocationFilters>
+): Promise<LocationResponse> => {
+  try {
+    const queryParams = new URLSearchParams();
+    queryParams.append("page", page.toString());
+
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value) {
+        queryParams.append(key, value.toLowerCase());
+      }
+    });
+
+    const response = await api.get<LocationResponse>(
+      `/location?${queryParams}`
+    );
+    return response.data;
+  } catch (error) {
+    throw handleApiError(error as AxiosError<ApiErrorResponse>);
+  }
+};
+
+export const getLocationById = async (id: number): Promise<Location> => {
+  try {
+    const response = await api.get<Location>(`/location/${id}`);
+    return response.data;
+  } catch (error) {
+    throw handleApiError(error as AxiosError<ApiErrorResponse>);
+  }
+};
+
+export const getMultipleLocations = async (ids: number[]) => {
+  const response = await api.get<Location[]>(`/location/${ids.join(",")}`);
   return response.data;
 };
 

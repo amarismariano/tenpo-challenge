@@ -1,7 +1,9 @@
 const STORAGE_KEYS = {
   TOKEN: "token",
-  CHARACTER_FILTERS: "characterFilters",
-  CHARACTERS_PAGE: "charactersPage",
+  CHARACTER_FILTERS: "character_filters",
+  CHARACTERS_PAGE: "characters_page",
+  LOCATIONS_FILTERS: "locations_filters",
+  LOCATIONS_PAGE: "locations_page",
 } as const;
 
 export const storage = {
@@ -28,11 +30,32 @@ export const storage = {
     localStorage.setItem(STORAGE_KEYS.CHARACTERS_PAGE, page.toString()),
   removePage: () => localStorage.removeItem(STORAGE_KEYS.CHARACTERS_PAGE),
 
+  // Location filters and page
+  getLocationsFilters: () => {
+    const filters = localStorage.getItem(STORAGE_KEYS.LOCATIONS_FILTERS);
+    return filters ? JSON.parse(filters) : null;
+  },
+  setLocationsFilters: (filters: object) =>
+    localStorage.setItem(
+      STORAGE_KEYS.LOCATIONS_FILTERS,
+      JSON.stringify(filters)
+    ),
+  removeLocationsFilters: () =>
+    localStorage.removeItem(STORAGE_KEYS.LOCATIONS_FILTERS),
+
+  getLocationsPage: () => localStorage.getItem(STORAGE_KEYS.LOCATIONS_PAGE),
+  setLocationsPage: (page: number) =>
+    localStorage.setItem(STORAGE_KEYS.LOCATIONS_PAGE, page.toString()),
+  removeLocationsPage: () =>
+    localStorage.removeItem(STORAGE_KEYS.LOCATIONS_PAGE),
+
   // Clear all app data
   clearAll: () => {
     localStorage.removeItem(STORAGE_KEYS.TOKEN);
     localStorage.removeItem(STORAGE_KEYS.CHARACTER_FILTERS);
     localStorage.removeItem(STORAGE_KEYS.CHARACTERS_PAGE);
+    localStorage.removeItem(STORAGE_KEYS.LOCATIONS_FILTERS);
+    localStorage.removeItem(STORAGE_KEYS.LOCATIONS_PAGE);
   },
 };
 
