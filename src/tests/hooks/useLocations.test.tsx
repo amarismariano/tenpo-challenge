@@ -9,14 +9,31 @@ vi.mock("../../services/api", () => ({
 }));
 
 // Mock storage
-vi.mock("../../utils/storage", () => ({
-  default: {
-    getLocationsPage: vi.fn(() => null),
-    setLocationsPage: vi.fn(),
-    getLocationsFilters: vi.fn(() => null),
-    setLocationsFilters: vi.fn(),
-  },
-}));
+vi.mock("../../utils/storage", async () => {
+  const actual = await vi.importActual("../../utils/storage");
+  return {
+    ...actual,
+    storage: {
+      getLocationsPage: vi.fn(() => null),
+      setLocationsPage: vi.fn(),
+      getLocationsFilters: vi.fn(() => null),
+      setLocationsFilters: vi.fn(),
+    },
+  };
+});
+
+// Mock the cache module
+vi.mock("../../utils/cache", async () => {
+  const actual = await vi.importActual("../../utils/cache");
+  return {
+    ...actual,
+    cache: {
+      get: vi.fn(() => null),
+      set: vi.fn(),
+      getMinimumLoadingTime: vi.fn(() => 0),
+    },
+  };
+});
 
 describe("useLocations Hook", () => {
   const mockLocationsResponse = {

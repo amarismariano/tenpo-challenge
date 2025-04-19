@@ -8,15 +8,32 @@ vi.mock("../../services/api", () => ({
   getCharacters: vi.fn(),
 }));
 
-// Mock storage
-vi.mock("../../utils/storage", () => ({
-  default: {
-    getPage: vi.fn(() => null),
-    setPage: vi.fn(),
-    getFilters: vi.fn(() => null),
-    setFilters: vi.fn(),
-  },
-}));
+// Mock the storage
+vi.mock("../../utils/storage", async () => {
+  const actual = await vi.importActual("../../utils/storage");
+  return {
+    ...actual,
+    storage: {
+      getPage: vi.fn(() => null),
+      setPage: vi.fn(),
+      getFilters: vi.fn(() => null),
+      setFilters: vi.fn(),
+    },
+  };
+});
+
+// Mock the cache module
+vi.mock("../../utils/cache", async () => {
+  const actual = await vi.importActual("../../utils/cache");
+  return {
+    ...actual,
+    cache: {
+      get: vi.fn(() => null),
+      set: vi.fn(),
+      getMinimumLoadingTime: vi.fn(() => 0),
+    },
+  };
+});
 
 describe("useCharacters Hook", () => {
   const mockCharactersResponse = {
@@ -42,6 +59,12 @@ describe("useCharacters Hook", () => {
     expect(result.current.characters).toEqual([]);
     expect(result.current.isLoading).toBe(true);
     expect(result.current.error).toBe(null);
+    expect(result.current.filters).toEqual({
+      name: "",
+      status: "",
+      species: "",
+      gender: "",
+    });
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
