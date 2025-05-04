@@ -87,6 +87,8 @@ export const useCharacters = (): UseCharactersReturn => {
         debouncedName || debouncedSpecies || filters.status || filters.gender;
       if (hasSearchTerms && characters.length === 0) {
         setError(new Error("No characters found with current filters"));
+      } else {
+        setError(null);
       }
     }
   }, [filters, debouncedName, debouncedSpecies, characters.length, isLoading]);
